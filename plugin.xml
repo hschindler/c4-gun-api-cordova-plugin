@@ -43,12 +43,14 @@
             </feature>
         </config-file>
 
+        <!-- <framework src="cn.pda.serialport:serialport" custom="true"/>
+        <framework src="com.hhw.uhfm:uhf_m_v1.4" custom="true"/> -->
+
+        <framework src="src/android/extras.gradle" custom="true" type="gradleReference" />
+
         <source-file src="src/android/c4GunApi.java" target-dir="src/de/schindlergmbh/cordova/c4GunApi" />
         <source-file src="src/android/libs/serialport.jar" target-dir="libs" />
-        <source-file src="src/android/libs/uhf_m_v1.4.jar" target-dir="libs" />
-
-        <framework src="cn.pda.serialport:serialport" custom="true"/>
-        <framework src="com.hhw.uhfm:uhf_m_v1.4" custom="true"/>
+        <source-file src="src/android/libs/uhf_m_v1.4.jar" target-dir="libs" />        
         
     </platform>
 

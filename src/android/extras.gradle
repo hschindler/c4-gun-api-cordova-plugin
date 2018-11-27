@@ -1,0 +1,3 @@
+dependencies {
+   provided files('lib/uhf_m_v1.4.jar', 'serialport.jar')
+}
