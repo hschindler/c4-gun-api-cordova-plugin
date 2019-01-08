@@ -69,4 +69,44 @@ C4GunApi.prototype.getFirmware = function (successCallback, errorCallback) {
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getFirmware', []);
 };
 
+/**
+ * startInventoryTID
+ *
+ * @param {Function} successCallback The function to call when the heading data is available
+ * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
+ */
+C4GunApi.prototype.startInventoryTID = function (successCallback, errorCallback) {
+    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+
+    console.log('startInventoryTID call exec');
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'startInventoryTID', []);
+};
+
+/**
+ * startInventoryEPC
+ *
+ * @param {Function} successCallback The function to call when the heading data is available
+ * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
+ */
+C4GunApi.prototype.startInventoryEPC = function (successCallback, errorCallback) {
+    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+
+    console.log('startInventoryEPC call exec');
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'startInventoryEPC', []);
+};
+
+/**
+ * stopInventory
+ *
+ * @param {Function} successCallback The function to call when the heading data is available
+ * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
+ */
+C4GunApi.prototype.stopInventory = function (successCallback, errorCallback) {
+    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+
+    console.log('stopInventory call exec');
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'stopInventory', []);
+};
+
+
 module.exports = new C4GunApi();
