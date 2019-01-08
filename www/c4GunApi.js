@@ -36,21 +36,22 @@ channel.waitForInitialization('onCordovaInfoReady');
  * phone, etc.
  * @constructor
  */
-function C4GunAPI() {
+function C4GunApi() {
     this.available = false;
 
     var me = this;
 
     channel.onCordovaReady.subscribe(function () {
-        me.getFirmware(function (firmware) {
+        console.log('C4 GUN onCordovaReady - getFirmware');
 
+        me.getFirmware(function (firmware) {
             me.available = true;
             console.log('C4 GUN Firmware:', firmware);
 
             channel.onCordovaInfoReady.fire();
         }, function (e) {
             me.available = false;
-            utils.alert('[ERROR] Error initializing C4GunAPI: ' + e);
+            utils.alert('[ERROR] Error initializing C4GunApi: ' + e);
         });
     });
 }
@@ -61,9 +62,11 @@ function C4GunAPI() {
  * @param {Function} successCallback The function to call when the heading data is available
  * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
  */
-C4GunAPI.prototype.getFirmware = function (successCallback, errorCallback) {
-    argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+C4GunApi.prototype.getFirmware = function (successCallback, errorCallback) {
+    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+
+    console.log('getFirmware call exec');
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getFirmware', []);
 };
 
-module.exports = new C4GunAPI();
+module.exports = new C4GunApi();

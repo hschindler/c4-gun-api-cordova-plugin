@@ -1,5 +1,4 @@
-
-package de.schindlergmbh.cordova.c4.c4_gun_api;
+package de.schindlergmbh.cordova.c4;
 
 import java.util.TimeZone;
 
@@ -17,27 +16,34 @@ import android.nfc.Tag;
 import android.view.KeyEvent;
 import android.util.Log;
 
-import com.hhw.uhfm.R;
-import com.pda.uhfm.EPCDataModel;
-import com.pda.uhfm.TagDataModel;
+// import com.hhw.uhfm.R;
+// import com.pda.uhfm.EPCDataModel;
+// import com.pda.uhfm.TagDataModel;
 import com.pda.uhfm.UHFManager;
+import com.pda.uhfm.VersionInfo;
 
 import cn.pda.serialport.Tools;
 
 public class C4GunApi extends CordovaPlugin {
     public static final String TAG = "C4GunApi";
 
+    // public static final int SEARCH_REQ_CODE = 0;
+
+    // public static final String PERM_NFC = Manifest.permission.NFC;
+
     // public static String platform; // Device OS
     // public static String uuid; // Device UUID
 
-    private UhfManager _uhfManager;
-
+    private UHFManager _uhfManager;
+    private Boolean _readerInitialized;
     private String _errorLog;
 
     /**
      * Constructor.
+     * 
      */
     public C4GunApi() {
+
     }
 
     /**
@@ -49,19 +55,19 @@ public class C4GunApi extends CordovaPlugin {
      */
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-
-        Log.d(TAG, "Initializing C4GunApi");
+        this._errorLog = "";
+        // Log.d(TAG, "Initializing C4GunApi");
 
         _errorLog = "";
 
         this._uhfManager = null;
-        UhfManager.Port = _uhfPort;
 
         try {
-            _uhfManager = UhfManager.getInstance();
+            _uhfManager = UHFManager.getInstance();
+            _readerInitialized = _uhfManager.initRfid();
         } catch (Exception e) {
             _errorLog = e.getMessage();
-            // e.printStackTrace();
+            e.printStackTrace();
             // Log.d(TAG, "Error: " + e.getMessage());
         }
     }
@@ -75,10 +81,10 @@ public class C4GunApi extends CordovaPlugin {
      *                        JavaScript.
      * @return True if the action was valid, false if not.
      */
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+    public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
         if (_errorLog.length() > 0) {
-            callbackContext.error(_errorLog);
+            callbackContext.error("ErrorLog: " + _errorLog);
             return true;
         }
 
@@ -87,16 +93,22 @@ public class C4GunApi extends CordovaPlugin {
             return true;
         }
 
+        if (this._readerInitialized == false) {
+            callbackContext.error("UHF API not initialized");
+            return true;
+        }
+
         if ("getFirmware".equals(action)) {
 
-            final byte[] firmwareVersion = _uhfManager.getFirmware();
+            // final byte[] firmwareVersion = _uhfManager.getVersion();
+            final com.pda.uhfm.VersionInfo firmwareVersion = _uhfManager.getVersion();
 
             cordova.getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
 
                     // String test = "test 1111";
-                    callbackContext.success(firmwareVersion);
+                    callbackContext.success(firmwareVersion.SoftwareVersion);
 
                     // PluginResult pluginResult = new PluginResult(PluginResult.Status.OK,
                     // firmwareVersion);
@@ -109,7 +121,6 @@ public class C4GunApi extends CordovaPlugin {
         } else {
             return false;
         }
-        return true;
     }
 
     // --------------------------------------------------------------------------

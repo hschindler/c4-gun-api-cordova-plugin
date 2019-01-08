@@ -31,26 +31,41 @@
     <issue>https://issues.apache.org/jira/browse/CB/component/12320648</issue>-->
 
     <js-module src="www/c4GunAPI.js" name="c4GunAPI">
-        <clobbers target="c4GunAPI" />
+        <clobbers target="c4GunApi" />
     </js-module>
 
     <!-- android -->
     <platform name="android">
+        <hook type="before_plugin_install" src="scripts/update_build_gradle.js" />
+        
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="c4GunAPI" >
-                <param name="android-package" value="de.schindlergmbh.cordova.c4.c4_gun_api"/>
+            <feature name="C4GunApi" >
+                <param name="android-package" value="de.schindlergmbh.cordova.c4.C4GunApi"/>
                 <param name="onload" value="true" />
             </feature>
         </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.NFC" />
+            <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
+            <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-feature android:name="android.hardware.nfc" android:required="false" />
+        </config-file>
+
 
         <!-- <framework src="cn.pda.serialport:serialport" custom="true"/>
         <framework src="com.hhw.uhfm:uhf_m_v1.4" custom="true"/> -->
 
         <framework src="src/android/extras.gradle" custom="true" type="gradleReference" />
 
-        <source-file src="src/android/C4GunApi.java" target-dir="src/de/schindlergmbh/cordova/c4GunApi" />
+        <source-file src="src/android/de/schindlergmbh/cordova/c4/C4GunApi.java" target-dir="src/de/schindlergmbh/cordova/c4/" />
         <source-file src="src/android/libs/serialport.jar" target-dir="libs" />
         <source-file src="src/android/libs/uhf_m_v1.4.jar" target-dir="libs" />        
+        <source-file src="src/android/libs/armeabi/libdevapi.so" target-dir="libs/armeabi" />        
+        <source-file src="src/android/libs/armeabi/libirdaSerialPort.so" target-dir="libs/armeabi" />        
         
     </platform>
 
