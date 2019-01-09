@@ -334,13 +334,35 @@ public class C4GunApi extends CordovaPlugin {
                             List<com.pda.uhfm.TagDataModel> tagDataModels = _uhfManager.ReadData(UHFManager.TID, 0, 6,
                                     new byte[4]);
 
-                            if (tagDataModels != null && tagDataModels.size() > 0) {
+                            if (tagDataModels != null) {
 
                                 for (com.pda.uhfm.TagDataModel tagDataModel : tagDataModels) {
+                                    // String tid = tagDataModel.DATA;
                                     String tid = tagDataModel.DATA;
-                                    dataList.add(tid);
-                                }
 
+                                    if (tid.length() == 0) {
+                                        byte[] bEpc = Tools.HexString2Bytes(tagDataModel.Epc);
+
+                                        byte[] bTid = _uhfManager.readDataByEPC(bEpc, new byte[4], 2, 0, 4);
+                                        if (bTid != null) {
+                                            tid = Tools.Bytes2HexString(bTid, bTid.length);
+                                            if (tid.length() > 1) {
+                                                dataList.add(tid);
+                                            } else {
+                                                tid = "epc: " + tagDataModel.Epc;
+                                                dataList.add(tid);
+                                            }
+                                        }
+                                        // } else {
+                                        // tid = "bTid = null - epc: " + tagDataModel.Epc + " bEpc ="
+                                        // + Tools.Bytes2HexString(bEpc, bEpc.length);
+                                        // dataList.add(tid);
+                                        // }
+
+                                    } else {
+                                        dataList.add(tid);
+                                    }
+                                }
                             }
                         } catch (Exception ex) {
                             if (_uhfCallBackContext != null) {

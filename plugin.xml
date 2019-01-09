@@ -62,10 +62,14 @@
         <framework src="src/android/extras.gradle" custom="true" type="gradleReference" />
 
         <source-file src="src/android/de/schindlergmbh/cordova/c4/C4GunApi.java" target-dir="src/de/schindlergmbh/cordova/c4/" />
-        <source-file src="src/android/libs/serialport.jar" target-dir="libs" />
-        <source-file src="src/android/libs/uhf_m_v1.4.jar" target-dir="libs" />        
+        <!-- <source-file src="src/android/libs/serialport.jar" target-dir="libs" />
+        <source-file src="src/android/libs/uhf_m_v1.4.jar" target-dir="libs" />         -->
+        <lib-file src="src/android/libs/serialport.jar" arch="device" /> 
+        <lib-file src="src/android/libs/uhf_m_v1.4.jar" arch="device" /> 
+        
         <source-file src="src/android/libs/armeabi/libdevapi.so" target-dir="libs/armeabi" />        
         <source-file src="src/android/libs/armeabi/libirdaSerialPort.so" target-dir="libs/armeabi" />        
+       
         
     </platform>
 
