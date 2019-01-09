@@ -108,6 +108,7 @@ C4GunApi.prototype.stopInventory = function (successCallback, errorCallback) {
     exec(successCallback, errorCallback, PLUGIN_NAME, 'stopInventory', []);
 };
 
+
 /**
  * waitForScanKey
  *
@@ -121,6 +122,18 @@ C4GunApi.prototype.waitForScanKey = function (successCallback, errorCallback) {
     exec(successCallback, errorCallback, PLUGIN_NAME, 'waitForScanKey', []);
 };
 
+/**
+ * setReadPower
+ *
+ * @param {Function} successCallback The function to call when the heading data is available
+ * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
+ */
+C4GunApi.prototype.setReadPower = function (successCallback, errorCallback) {
+    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+
+    console.log('setReadPower call exec');
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'setReadPower', []);
+};
 
 
 

@@ -176,7 +176,20 @@ public class C4GunApi extends CordovaPlugin {
             return true;
 
         } else if ("setReadPower".equals(action)) {
-            return false;
+            if (this._uhfManager == null) {
+                // callbackContext.error("UHF API not installed");
+                callbackContext.error("UHF API not installed");
+                return true;
+            }
+
+            int power = args.getInt(0); // 0 bis 30
+            boolean result = false;
+
+            if (power >= 0 && poweer <= 30) {
+                result = this._uhfManager.setReadPower(power);
+            }
+
+            return result;
         } else {
             return false;
         }
