@@ -19,6 +19,11 @@ import android.nfc.Tag;
 import android.view.KeyEvent;
 import android.util.Log;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.widget.Toast;
 // import com.hhw.uhfm.R;
 // import com.pda.uhfm.EPCDataModel;
 // import com.pda.uhfm.TagDataModel;
@@ -43,6 +48,7 @@ public class C4GunApi extends CordovaPlugin {
 
     private boolean runFlag = true;
     private boolean startFlag = false;
+    private boolean waitingForScanKey = false;
 
     private String readMode = "tid"; // tid / epc
 
@@ -50,6 +56,9 @@ public class C4GunApi extends CordovaPlugin {
     // private ArrayList<String> _listEPC;
 
     private CallbackContext _uhfCallBackContext;
+    private CallbackContext _scanKeyCallBackContext;
+
+    private KeyReceiver keyReceiver;
 
     /**
      * Constructor.
@@ -77,7 +86,7 @@ public class C4GunApi extends CordovaPlugin {
 
         try {
             InitUhfManager();
-
+            registerReceiver();
         } catch (Exception e) {
             _errorLog = e.getMessage();
             e.printStackTrace();
@@ -159,6 +168,13 @@ public class C4GunApi extends CordovaPlugin {
         } else if ("stopInventory".equals(action)) {
             startFlag = false;
             return true;
+
+        } else if ("waitForScanKey".equals(action)) {
+
+            waitingForScanKey = true;
+            this._scanKeyCallBackContext = callbackContext;
+            return true;
+
         } else if ("setReadPower".equals(action)) {
             return false;
         } else {
@@ -191,11 +207,17 @@ public class C4GunApi extends CordovaPlugin {
 
         // closeBarcode();
 
+        _scanKeyCallBackContext = null;
+        _uhfCallBackContext = null;
+
+        unregisterReceiver();
+
         super.onDestroy();
     }
 
     public void onPause() {
         startFlag = false;
+        waitingForScanKey = false;
         this._uhfManager.close();
         super.onPause(false);
     }
@@ -236,6 +258,63 @@ public class C4GunApi extends CordovaPlugin {
         return true;
     }
 
+    private void registerReceiver() {
+        keyReceiver = new KeyReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.rfid.FUN_KEY");
+        cordova.getActivity().registerReceiver(keyReceiver, filter);
+    }
+
+    private void unregisterReceiver() {
+        cordova.getActivity().unregisterReceiver(keyReceiver);
+    }
+
+    private static Toast toast;
+
+    private class KeyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int keyCode = intent.getIntExtra("keyCode", 0);
+            if (keyCode == 0) {// ����H941
+                keyCode = intent.getIntExtra("keycode", 0);
+            }
+            boolean keyDown = intent.getBooleanExtra("keydown", false);
+            if (keyDown) {
+                if (toast == null) {
+                    toast = Toast.makeText(cordova.getActivity(), "KeyReceiver:keyCode = " + keyCode,
+                            Toast.LENGTH_SHORT);
+                } else {
+                    toast.setText("KeyReceiver:keyCode = " + keyCode);
+                }
+                toast.show();
+                switch (keyCode) {
+                case KeyEvent.KEYCODE_F1:
+
+                    break;
+                case KeyEvent.KEYCODE_F2:
+
+                    break;
+                case KeyEvent.KEYCODE_F3:
+                    if (waitingForScanKey == true) {
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "scan clicked");
+                        pluginResult.setKeepCallback(true);
+                        _scanKeyCallBackContext.sendPluginResult(pluginResult);
+                    }
+
+                    break;
+                case KeyEvent.KEYCODE_F4:
+
+                    break;
+                case KeyEvent.KEYCODE_F5:
+
+                    break;
+                }
+            }
+
+        }
+    }
+
     /**
      * Inventory EPC Thread
      */
@@ -254,12 +333,14 @@ public class C4GunApi extends CordovaPlugin {
 
                             List<com.pda.uhfm.TagDataModel> tagDataModels = _uhfManager.ReadData(UHFManager.TID, 0, 6,
                                     new byte[4]);
+
                             if (tagDataModels != null && tagDataModels.size() > 0) {
 
                                 for (com.pda.uhfm.TagDataModel tagDataModel : tagDataModels) {
                                     String tid = tagDataModel.DATA;
                                     dataList.add(tid);
                                 }
+
                             }
                         } catch (Exception ex) {
                             if (_uhfCallBackContext != null) {
@@ -295,9 +376,10 @@ public class C4GunApi extends CordovaPlugin {
                         if (dataList.size() > 0) {
                             returnCurrentTIDs(dataList);
                         }
-                    } else {
-                        returnCurrentTIDs(new ArrayList<String>());
                     }
+                    // else {
+                    // returnCurrentTIDs(new ArrayList<String>());
+                    // }
 
                     try {
                         Thread.sleep(40);
