@@ -231,7 +231,7 @@ public class C4GunApi extends CordovaPlugin {
         this._readerInitialized = _uhfManager.initRfid();
 
         this._uhfManager.setProtocol(_uhfManager.PROTOCOL_ISO_18000_6C);
-        this._uhfManager.setFreBand(com.pda.uhfm.FreRegion.TMR_REGION_FCC);
+        this._uhfManager.setFreBand(com.pda.uhfm.FreRegion.TMR_REGION_Europea_Union_3);
         this._uhfManager.setReadPower(27); // 0-30
         this._uhfManager.setWritePower(27);
     }
