@@ -1,37 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Licensed to the Apache Software Foundation (ASF) under one
-  or more contributor license agreements.  See the NOTICE file
-  distributed with this work for additional information
-  regarding copyright ownership.  The ASF licenses this file
-  to you under the Apache License, Version 2.0 (the
-  "License"); you may not use this file except in compliance
-  with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing,
-  software distributed under the License is distributed on an
-  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, either express or implied.  See the License for the
-  specific language governing permissions and limitations
-  under the License.
--->
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="c4-gun-api-cordova-plugin"
     version="1.0.0">
-    <name>C4GunAPI</name>
+    <name>C4ApiCordovaPlugin</name>
     <description>C4 Gun API</description>
     <license>Apache 2.0</license>
     <keywords>C4,gun,api</keywords>
-    <!--<repo>https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git</repo>
-    <issue>https://issues.apache.org/jira/browse/CB/component/12320648</issue>-->
-
-    <js-module src="www/c4GunAPI.js" name="c4GunAPI">
-        <clobbers target="c4GunApi" />
+    <repo>https://github.com/hschindler/c4-gun-api-cordova-plugin.git</repo>
+    <issue>https://github.com/hschindler/c4-gun-api-cordova-plugin.git/issues</issue>
+    <js-module src="www/c4GunAPI.js" name="C4ApiCordovaPlugin">
+    <runs/>
+        <!-- This is the window variable name you want, like window.MyCordovaPlugin -->
+        <clobbers target="C4ApiCordovaPlugin" />
     </js-module>
 
     <!-- android -->
@@ -39,8 +22,8 @@
         <hook type="before_plugin_install" src="scripts/update_build_gradle.js" />
         
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="C4GunApi" >
-                <param name="android-package" value="de.schindlergmbh.cordova.c4.C4GunApi"/>
+            <feature name="C4ApiCordovaPlugin" >
+                <param name="android-package" value="de.schindlergmbh.cordova.c4.C4ApiCordovaPlugin"/>
                 <param name="onload" value="true" />
             </feature>
         </config-file>
@@ -61,15 +44,16 @@
 
         <framework src="src/android/extras.gradle" custom="true" type="gradleReference" />
 
-        <source-file src="src/android/de/schindlergmbh/cordova/c4/C4GunApi.java" target-dir="src/de/schindlergmbh/cordova/c4/" />
+        <source-file src="src/android/de/schindlergmbh/cordova/c4/C4ApiCordovaPlugin.java" target-dir="src/de/schindlergmbh/cordova/c4/" />
         <!-- <source-file src="src/android/libs/serialport.jar" target-dir="libs" />
         <source-file src="src/android/libs/uhf_m_v1.4.jar" target-dir="libs" />         -->
         <lib-file src="src/android/libs/serialport.jar" arch="device" /> 
         <lib-file src="src/android/libs/uhf_m_v1.4.jar" arch="device" /> 
         
         <source-file src="src/android/libs/armeabi/libdevapi.so" target-dir="libs/armeabi" />        
-        <source-file src="src/android/libs/armeabi/libirdaSerialPort.so" target-dir="libs/armeabi" />        
-       
+        <source-file src="src/android/libs/armeabi/libirdaSerialPort.so" target-dir="libs/armeabi" />       
+        <source-file src="src/android/libs/armeabi-v7a/libdevapi.so" target-dir="libs/armeabi-v7a" />        
+        <source-file src="src/android/libs/armeabi-v7a/libirdaSerialPort.so" target-dir="libs/armeabi-v7a" />
         
     </platform>
 

@@ -32,8 +32,8 @@ import com.pda.uhfm.VersionInfo;
 
 import cn.pda.serialport.Tools;
 
-public class C4GunApi extends CordovaPlugin {
-    public static final String TAG = "C4GunApi";
+public class C4ApiCordovaPlugin extends CordovaPlugin {
+    public static final String TAG = "C4ApiCordovaPlugin";
 
     // public static final int SEARCH_REQ_CODE = 0;
 
@@ -61,14 +61,6 @@ public class C4GunApi extends CordovaPlugin {
     private KeyReceiver keyReceiver;
 
     /**
-     * Constructor.
-     * 
-     */
-    public C4GunApi() {
-
-    }
-
-    /**
      * Sets the context of the Command. This can then be used to do things like get
      * file paths associated with the Activity.
      *
@@ -82,19 +74,22 @@ public class C4GunApi extends CordovaPlugin {
 
         _errorLog = "";
 
-        this._uhfManager = null;
+        // this._uhfManager = null;
 
-        try {
-            InitUhfManager();
-            registerReceiver();
-        } catch (Exception e) {
-            _errorLog = e.getMessage();
-            e.printStackTrace();
-            // Log.d(TAG, "Error: " + e.getMessage());
-        }
+        // try {
+        // InitUhfManager();
+        // registerReceiver();
+        // } catch (Exception e) {
+        // _errorLog = e.getMessage();
+        // e.printStackTrace();
+        // // Log.d(TAG, "Error: " + e.getMessage());
+        // }
 
-        Thread thread = new InventoryThread();
-        thread.start();
+        // if (this._uhfManager != null) {
+        // Thread thread = new InventoryThread();
+        // thread.start();
+        // }
+
     }
 
     /**
@@ -113,20 +108,31 @@ public class C4GunApi extends CordovaPlugin {
             return true;
         }
 
-        if (this._uhfManager == null) {
-            callbackContext.error("UHF API not installed");
-            return true;
-        }
+        // if (this._uhfManager == null) {
+        // callbackContext.error("UHF API not installed");
+        // return true;
+        // }
 
-        if (this._readerInitialized == false) {
-            callbackContext.error("UHF API not initialized");
-            return true;
-        }
+        // if (this._readerInitialized == false) {
+        // callbackContext.error("UHF API not initialized");
+        // return true;
+        // }
 
         if ("getFirmware".equals(action)) {
-
+            try {
+                this.InitUhfManager();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
             // final byte[] firmwareVersion = _uhfManager.getVersion();
-            final com.pda.uhfm.VersionInfo firmwareVersion = _uhfManager.getVersion();
+
+            if (this._uhfManager == null) {
+                // callbackContext.error("UHF API not installed");
+                callbackContext.error("UHF API not installed");
+                return true;
+            }
+
+            final com.pda.uhfm.VersionInfo firmwareVersion = this._uhfManager.getVersion();
 
             cordova.getActivity().runOnUiThread(new Runnable() {
 
@@ -166,10 +172,23 @@ public class C4GunApi extends CordovaPlugin {
             return this.startInventoryThread("epc");
 
         } else if ("stopInventory".equals(action)) {
+
+            if (this._uhfManager == null) {
+                // callbackContext.error("UHF API not installed");
+                callbackContext.error("UHF API not installed");
+                return true;
+            }
+            this._uhfCallBackContext = callbackContext;
             startFlag = false;
             return true;
 
         } else if ("waitForScanKey".equals(action)) {
+
+            if (this._uhfManager == null) {
+                // callbackContext.error("UHF API not installed");
+                callbackContext.error("UHF API not installed");
+                return true;
+            }
 
             waitingForScanKey = true;
             this._scanKeyCallBackContext = callbackContext;
@@ -185,7 +204,7 @@ public class C4GunApi extends CordovaPlugin {
             int power = args.getInt(0); // 0 bis 30
             boolean result = false;
 
-            if (power >= 0 && poweer <= 30) {
+            if (power >= 0 && power <= 30) {
                 result = this._uhfManager.setReadPower(power);
             }
 
@@ -241,6 +260,11 @@ public class C4GunApi extends CordovaPlugin {
 
     private void InitUhfManager() {
         this._uhfManager = UHFManager.getInstance();
+
+        if (this._uhfManager == null) {
+            return;
+        }
+
         this._readerInitialized = _uhfManager.initRfid();
 
         this._uhfManager.setProtocol(_uhfManager.PROTOCOL_ISO_18000_6C);
@@ -279,7 +303,12 @@ public class C4GunApi extends CordovaPlugin {
     }
 
     private void unregisterReceiver() {
-        cordova.getActivity().unregisterReceiver(keyReceiver);
+        try {
+            cordova.getActivity().unregisterReceiver(keyReceiver);
+        } catch (Exception e) {
+
+        }
+
     }
 
     private static Toast toast;
@@ -425,7 +454,9 @@ public class C4GunApi extends CordovaPlugin {
 
             } // while
 
-            _uhfManager.stopInventory();
+            if (_uhfManager != null) {
+                _uhfManager.stopInventory();
+            }
 
         } // run
 

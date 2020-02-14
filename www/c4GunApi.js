@@ -1,140 +1,95 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+cordova.define("c4-gun-api-cordova-plugin.C4ApiCordovaPlugin", function (require, exports, module) {
 
-var argscheck = require('cordova/argscheck');
-var channel = require('cordova/channel');
-var utils = require('cordova/utils');
-var exec = require('cordova/exec');
-var cordova = require('cordova');
+    var argscheck = require('cordova/argscheck');
+    var channel = require('cordova/channel');
+    var utils = require('cordova/utils');
+    var exec = require('cordova/exec');
+    var cordova = require('cordova');
 
-var PLUGIN_NAME = 'C4GunApi';
+    var PLUGIN_NAME = 'C4ApiCordovaPlugin';
 
-channel.createSticky('onCordovaInfoReady');
-// Tell cordova channel to wait on the CordovaInfoReady event
-channel.waitForInitialization('onCordovaInfoReady');
+    channel.createSticky('onCordovaInfoReady');
+    // Tell cordova channel to wait on the CordovaInfoReady event
+    channel.waitForInitialization('onCordovaInfoReady');
 
-/**
- * This represents the mobile device, and provides properties for inspecting the model, version, UUID of the
- * phone, etc.
- * @constructor
- */
-function C4GunApi() {
-    this.available = false;
+    /**
+     * This represents the mobile device, and provides properties for inspecting the model, version, UUID of the
+     * phone, etc.
+     * @constructor
+     */
+    function C4ApiCordovaPlugin() {
+        this.available = false;
 
-    var me = this;
+        //var me = this;
 
-    channel.onCordovaReady.subscribe(function () {
-        console.log('C4 GUN onCordovaReady - getFirmware');
+        // channel.onCordovaReady.subscribe(function () {
+        // console.log('C4 GUN onCordovaReady - getFirmware');
 
-        me.getFirmware(function (firmware) {
-            me.available = true;
-            console.log('C4 GUN Firmware:', firmware);
+        // me.common.getFirmware(function (firmware) {
+        //     me.available = true;
+        //     console.log('C4 GUN Firmware:', firmware);
 
-            channel.onCordovaInfoReady.fire();
-        }, function (e) {
-            me.available = false;
-            utils.alert('[ERROR] Error initializing C4GunApi: ' + e);
-        });
-    });
-}
+        //     channel.onCordovaInfoReady.fire();
+        // }, function (e) {
+        //     me.available = false;
+        //     utils.alert('[ERROR] Error initializing C4GunApi: ' + e);
+        // });
+        //});
+    }
 
-/**
- * Get firmware
- *
- * @param {Function} successCallback The function to call when the heading data is available
- * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
- */
-C4GunApi.prototype.getFirmware = function (successCallback, errorCallback) {
-    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+    /** common */
+    C4ApiCordovaPlugin.prototype.common = {
+        /**
+         * Get firmware
+         *
+         * @param {Function} successCallback The function to call when the heading data is available
+         * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
+         */
+        getFirmware: function (successCallback, errorCallback) {
+            // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
 
-    console.log('getFirmware call exec');
-    exec(successCallback, errorCallback, PLUGIN_NAME, 'getFirmware', []);
-};
+            console.log('getFirmware call exec');
+            exec(successCallback, errorCallback, PLUGIN_NAME, 'getFirmware', []);
+        }
+    };
 
-/**
- * startInventoryTID
- *
- * @param {Function} successCallback The function to call when the heading data is available
- * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
- */
-C4GunApi.prototype.startInventoryTID = function (successCallback, errorCallback) {
-    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+    /** uhf */
+    C4ApiCordovaPlugin.prototype.uhf = {
+        startInventory: function (successCallback, errorCallback) {
+            // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
 
-    console.log('startInventoryTID call exec');
-    exec(successCallback, errorCallback, PLUGIN_NAME, 'startInventoryTID', []);
-};
+            console.log('startInventoryTID call exec');
+            exec(successCallback, errorCallback, PLUGIN_NAME, 'startInventoryTID', []);
+        },
+        startInventoryEPC: function (successCallback, errorCallback) {
+            // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
 
-/**
- * startInventoryEPC
- *
- * @param {Function} successCallback The function to call when the heading data is available
- * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
- */
-C4GunApi.prototype.startInventoryEPC = function (successCallback, errorCallback) {
-    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+            console.log('startInventoryEPC call exec');
+            exec(successCallback, errorCallback, PLUGIN_NAME, 'startInventoryEPC', []);
+        },
+        stopInventory: function (successCallback, errorCallback) {
+            // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
 
-    console.log('startInventoryEPC call exec');
-    exec(successCallback, errorCallback, PLUGIN_NAME, 'startInventoryEPC', []);
-};
+            console.log('stopInventory call exec');
+            exec(successCallback, errorCallback, PLUGIN_NAME, 'stopInventory', []);
+        },
+        waitForScanKey: function (successCallback, errorCallback) {
+            // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
 
-/**
- * stopInventory
- *
- * @param {Function} successCallback The function to call when the heading data is available
- * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
- */
-C4GunApi.prototype.stopInventory = function (successCallback, errorCallback) {
-    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
+            console.log('stopInventory call exec');
+            exec(successCallback, errorCallback, PLUGIN_NAME, 'waitForScanKey', []);
+        },
+        setReadPower: function (successCallback, errorCallback) {
+            // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
 
-    console.log('stopInventory call exec');
-    exec(successCallback, errorCallback, PLUGIN_NAME, 'stopInventory', []);
-};
-
-
-/**
- * waitForScanKey
- *
- * @param {Function} successCallback The function to call when the heading data is available
- * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
- */
-C4GunApi.prototype.waitForScanKey = function (successCallback, errorCallback) {
-    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
-
-    console.log('stopInventory call exec');
-    exec(successCallback, errorCallback, PLUGIN_NAME, 'waitForScanKey', []);
-};
-
-/**
- * setReadPower
- *
- * @param {Function} successCallback The function to call when the heading data is available
- * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
- */
-C4GunApi.prototype.setReadPower = function (successCallback, errorCallback) {
-    // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
-
-    console.log('setReadPower call exec');
-    exec(successCallback, errorCallback, PLUGIN_NAME, 'setReadPower', []);
-};
+            console.log('setReadPower call exec');
+            exec(successCallback, errorCallback, PLUGIN_NAME, 'setReadPower', []);
+        }
+    };
 
 
 
-module.exports = new C4GunApi();
+
+    module.exports = new C4ApiCordovaPlugin();
+
+});
