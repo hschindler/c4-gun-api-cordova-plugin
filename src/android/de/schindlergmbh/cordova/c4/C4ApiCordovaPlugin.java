@@ -310,7 +310,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
                 this._uhfManager.setFreBand(com.pda.uhfm.FreRegion.TMR_REGION_Europea_Union_3);
 
                 if (this._outputPower > 0) {
-                    boolean result = this._uhfManager.setOutputPower(this._outputPower);
+                    boolean result = this._uhfManager.setReadPower(this._outputPower);
                 } else {
                     this._uhfManager.setReadPower(27); // 0-30
                 }
