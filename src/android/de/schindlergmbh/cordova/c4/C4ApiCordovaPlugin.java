@@ -52,6 +52,8 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
     private String readMode = "tid"; // tid / epc
 
+    private int _outputPower = 0;
+
     // private ArrayList<com.pda.uhfm.TagDataModel> _listTagDataModel;
     // private ArrayList<String> _listEPC;
 
@@ -150,11 +152,11 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
             return true;
         } else if ("startInventoryTID".equals(action)) {
-            if (this._uhfManager == null) {
-                // callbackContext.error("UHF API not installed");
-                callbackContext.error("UHF API not installed");
-                return true;
-            }
+            // if (this._uhfManager == null) {
+            // // callbackContext.error("UHF API not installed");
+            // callbackContext.error("UHF API not installed");
+            // return true;
+            // }
 
             this._uhfCallBackContext = callbackContext;
 
@@ -173,11 +175,11 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
         } else if ("stopInventory".equals(action)) {
 
-            if (this._uhfManager == null) {
-                // callbackContext.error("UHF API not installed");
-                callbackContext.error("UHF API not installed");
-                return true;
-            }
+            // if (this._uhfManager == null) {
+            // // callbackContext.error("UHF API not installed");
+            // callbackContext.error("UHF API not installed");
+            // return true;
+            // }
             this._uhfCallBackContext = callbackContext;
             startFlag = false;
             return true;
@@ -195,20 +197,27 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
             return true;
 
         } else if ("setReadPower".equals(action)) {
-            if (this._uhfManager == null) {
-                // callbackContext.error("UHF API not installed");
-                callbackContext.error("UHF API not installed");
-                return true;
+            // if (this._uhfManager == null) {
+            // // callbackContext.error("UHF API not installed");
+            // callbackContext.error("UHF API not installed");
+            // return true;
+            // }
+
+            // int power = args.getInt(0); // 0 bis 30
+            // boolean result = false;
+
+            // if (power >= 0 && power <= 30) {
+            // result = this._uhfManager.setReadPower(power);
+            // }
+
+            // return result;
+
+            if (args == null) {
+                return false;
             }
 
-            int power = args.getInt(0); // 0 bis 30
-            boolean result = false;
-
-            if (power >= 0 && power <= 30) {
-                result = this._uhfManager.setReadPower(power);
-            }
-
-            return result;
+            this._outputPower = args.getInt(0);
+            return true;
         } else {
             return false;
         }
@@ -269,7 +278,13 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
         this._uhfManager.setProtocol(_uhfManager.PROTOCOL_ISO_18000_6C);
         this._uhfManager.setFreBand(com.pda.uhfm.FreRegion.TMR_REGION_Europea_Union_3);
-        this._uhfManager.setReadPower(27); // 0-30
+
+        if (this._outputPower > 0) {
+            boolean result = _uhfManager.setOutputPower(this._outputPower);
+        } else {
+            this._uhfManager.setReadPower(27); // 0-30
+        }
+
         this._uhfManager.setWritePower(27);
     }
 

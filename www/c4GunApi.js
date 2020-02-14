@@ -1,16 +1,16 @@
 cordova.define("c4-gun-api-cordova-plugin.C4ApiCordovaPlugin", function (require, exports, module) {
 
-    var argscheck = require('cordova/argscheck');
-    var channel = require('cordova/channel');
-    var utils = require('cordova/utils');
+    // var argscheck = require('cordova/argscheck');
+    // var channel = require('cordova/channel');
+    // var utils = require('cordova/utils');
     var exec = require('cordova/exec');
-    var cordova = require('cordova');
+    // var cordova = require('cordova');
 
     var PLUGIN_NAME = 'C4ApiCordovaPlugin';
 
-    channel.createSticky('onCordovaInfoReady');
+    //channel.createSticky('onCordovaInfoReady');
     // Tell cordova channel to wait on the CordovaInfoReady event
-    channel.waitForInitialization('onCordovaInfoReady');
+    //channel.waitForInitialization('onCordovaInfoReady');
 
     /**
      * This represents the mobile device, and provides properties for inspecting the model, version, UUID of the
