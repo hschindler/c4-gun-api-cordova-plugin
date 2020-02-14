@@ -54,6 +54,8 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
     private int _outputPower = 0;
 
+    private Thread _scanThread;
+
     // private ArrayList<com.pda.uhfm.TagDataModel> _listTagDataModel;
     // private ArrayList<String> _listEPC;
 
@@ -223,24 +225,38 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
         }
     }
 
-    public void onResume() {
+    public void onResume(boolean multitasking) {
+        // TODO Auto-generated method stub
+        // super.onResume(multitasking);
 
-        super.onResume(false);
+        Log.d(TAG, "onResume - runFlag: " + String.valueOf(startFlag));
 
-        this.InitUhfManager();
+        // this.initializeUHFManager();
 
-        // Barcode1DManager.BaudRate = _barcodeBaudrate;
-        // Barcode1DManager.Port = _barcodePort;
-        // Barcode1DManager.Power = _barcodePower;
+        if (this.runFlag == true) {
+            this.StartInventoryThread();
+        }
 
     }
 
-    @Override
-    public void onDestroy() {
-        runFlag = false;
-        if (this._uhfManager != null) {
-            this._uhfManager.close();
+    public void onRestart() {
+        // TODO Auto-generated method stub
+        // super.onRestart();
+
+        Log.d(TAG, "onRestart");
+
+        // this.initializeUHFManager();
+
+        if (this.runFlag == true) {
+            this.StartInventoryThread();
         }
+    }
+
+    public void onDestroy() {
+
+        this.StopInventoryThread();
+
+        this.disposeUHFManager();
 
         // if (_barcodeManager != null) {
         // _barcodeManager.Close();
@@ -253,7 +269,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
         unregisterReceiver();
 
-        super.onDestroy();
+        // super.onDestroy();
     }
 
     public void onPause() {
@@ -267,25 +283,47 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
     // LOCAL METHODS
     // --------------------------------------------------------------------------
 
+    private void disposeUHFManager() {
+
+        if (this._uhfManager != null) {
+            Log.d(TAG, "disposeUHFManager");
+
+            try {
+                this._uhfManager.close();
+            } catch (Exception e) {
+                _errorLog = e.getMessage();
+            }
+
+            this._uhfManager = null;
+        }
+    }
+
     private void InitUhfManager() {
-        this._uhfManager = UHFManager.getInstance();
 
         if (this._uhfManager == null) {
-            return;
+
+            try {
+                this._uhfManager = UHFManager.getInstance();
+                this._readerInitialized = _uhfManager.initRfid();
+
+                this._uhfManager.setProtocol(_uhfManager.PROTOCOL_ISO_18000_6C);
+                this._uhfManager.setFreBand(com.pda.uhfm.FreRegion.TMR_REGION_Europea_Union_3);
+
+                if (this._outputPower > 0) {
+                    boolean result = _uhfManager.setOutputPower(this._outputPower);
+                } else {
+                    this._uhfManager.setReadPower(27); // 0-30
+                }
+
+                this._uhfManager.setWritePower(27);
+            } catch (Exception e) {
+                _errorLog = e.getMessage();
+                e.printStackTrace();
+                // Log.d(TAG, "Error: " + e.getMessage());
+            }
+
         }
 
-        this._readerInitialized = _uhfManager.initRfid();
-
-        this._uhfManager.setProtocol(_uhfManager.PROTOCOL_ISO_18000_6C);
-        this._uhfManager.setFreBand(com.pda.uhfm.FreRegion.TMR_REGION_Europea_Union_3);
-
-        if (this._outputPower > 0) {
-            boolean result = _uhfManager.setOutputPower(this._outputPower);
-        } else {
-            this._uhfManager.setReadPower(27); // 0-30
-        }
-
-        this._uhfManager.setWritePower(27);
     }
 
     private JSONArray ConvertArrayList(ArrayList<String> list) {
@@ -297,17 +335,28 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
         return jsonArray;
     }
 
-    private Boolean startInventoryThread(String mode) {
+    private void StartInventoryThread(String mode) {
 
         this.readMode = mode;
 
-        // _listTagDataModel = new ArrayList<com.pda.uhfm.TagDataModel>();
-        // _listEPC = new ArrayList<String>();
+        Log.d(TAG, "StartInventoryThread");
 
         // start inventory thread
         startFlag = true;
+        runFlag = true;
 
-        return true;
+        if (this._scanThread == null) {
+            Log.d(TAG, "StartInventoryThread - create new thread");
+            this._scanThread = new InventoryThread();
+        }
+
+        Log.d(TAG, "StartInventoryThread - start thread");
+        this._scanThread.start();
+    }
+
+    private void StopInventoryThread() {
+        runFlag = false;
+        startFlag = false;
     }
 
     private void registerReceiver() {
@@ -373,7 +422,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
     }
 
     /**
-     * Inventory EPC Thread
+     * Inventory Thread
      */
     class InventoryThread extends Thread {
 
@@ -382,8 +431,18 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
         @Override
         public void run() {
             super.run();
-            while (runFlag) {
-                if (startFlag) {
+            Log.d(TAG, "InventoryThread starting...");
+
+            InitUhfManager();
+
+            Log.d(TAG, "InventoryThread startflag = " + String.valueOf(startFlag));
+
+            while (startFlag) {
+
+                Log.d(TAG, "Waiting for timeout..");
+
+                if (_uhfManager != null) {
+
                     if ("tid".equals(readMode)) {
                         try {
                             dataList = new ArrayList<String>();
@@ -451,27 +510,28 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
                         }
                     }
 
-                    if ((dataList != null) && (!dataList.isEmpty())) {
-                        if (dataList.size() > 0) {
-                            returnCurrentTIDs(dataList);
-                        }
+                }
+
+                if ((dataList != null) && (!dataList.isEmpty())) {
+                    if (dataList.size() > 0) {
+                        returnCurrentTIDs(dataList);
                     }
-                    // else {
-                    // returnCurrentTIDs(new ArrayList<String>());
-                    // }
+                }
+                // else {
+                // returnCurrentTIDs(new ArrayList<String>());
+                // }
 
-                    try {
-                        Thread.sleep(40);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } // startFlag
+                try {
+                    Thread.sleep(40);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-            } // while
+            } // while startFlag
 
-            if (_uhfManager != null) {
-                _uhfManager.stopInventory();
-            }
+            Log.d(TAG, "InventoryThread is closing...");
+
+            disposeUHFManager();
 
         } // run
 
