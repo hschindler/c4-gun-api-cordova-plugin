@@ -304,13 +304,13 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
             try {
                 this._uhfManager = UHFManager.getInstance();
-                this._readerInitialized = _uhfManager.initRfid();
+                this._readerInitialized = this._uhfManager.initRfid();
 
                 this._uhfManager.setProtocol(_uhfManager.PROTOCOL_ISO_18000_6C);
                 this._uhfManager.setFreBand(com.pda.uhfm.FreRegion.TMR_REGION_Europea_Union_3);
 
                 if (this._outputPower > 0) {
-                    boolean result = _uhfManager.setOutputPower(this._outputPower);
+                    boolean result = this._uhfManager.setOutputPower(this._outputPower);
                 } else {
                     this._uhfManager.setReadPower(27); // 0-30
                 }
