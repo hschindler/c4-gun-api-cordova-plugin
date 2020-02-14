@@ -1,6 +1,6 @@
 {
   "name": "c4-gun-api-cordova-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "C4 Gun API Plugin",
   "types": "./types/index.d.ts",
   "cordova": {
@@ -15,12 +15,7 @@
     "api",
     "uhf"
   ],
-  "scripts": {
-    "test": "npm run eslint",
-    "eslint": "node node_modules/eslint/bin/eslint www && node node_modules/eslint/bin/eslint src && node node_modules/eslint/bin/eslint tests"
-  },
-  "author": "Schindler Solutions gmbH",
-  "license": "Apache-2.0",
+  "author": "Schindler Solutions GmbH",
   "engines": {
     "cordovaDependencies": {
       "1.0.0": {

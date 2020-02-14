@@ -7,7 +7,7 @@
     version="1.0.0">
     <name>C4ApiCordovaPlugin</name>
     <description>C4 Gun API</description>
-    <license>Apache 2.0</license>
+    <license>MIT</license>
     <keywords>C4,gun,api</keywords>
     <repo>https://github.com/hschindler/c4-gun-api-cordova-plugin.git</repo>
     <issue>https://github.com/hschindler/c4-gun-api-cordova-plugin.git/issues</issue>
