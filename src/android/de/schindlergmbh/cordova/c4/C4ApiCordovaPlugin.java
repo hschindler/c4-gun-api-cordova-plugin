@@ -143,7 +143,9 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
                 public void run() {
 
                     // String test = "test 1111";
-                    callbackContext.success(firmwareVersion.SoftwareVersion);
+                    if (firmwareVersion != null) {
+                        callbackContext.success(firmwareVersion.SoftwareVersion);
+                    }
 
                     // PluginResult pluginResult = new PluginResult(PluginResult.Status.OK,
                     // firmwareVersion);
@@ -162,7 +164,9 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
             this._uhfCallBackContext = callbackContext;
 
-            return this.startInventoryThread("tid");
+            this.StartInventoryThread("tid");
+
+            return true;
 
         } else if ("startInventoryEPC".equals(action)) {
             if (this._uhfManager == null) {
@@ -173,7 +177,9 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
             this._uhfCallBackContext = callbackContext;
 
-            return this.startInventoryThread("epc");
+            this.StartInventoryThread("epc");
+
+            return true;
 
         } else if ("stopInventory".equals(action)) {
 
@@ -234,7 +240,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
         // this.initializeUHFManager();
 
         if (this.runFlag == true) {
-            this.StartInventoryThread();
+            this.StartInventoryThread(this.readMode);
         }
 
     }
@@ -248,7 +254,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
         // this.initializeUHFManager();
 
         if (this.runFlag == true) {
-            this.StartInventoryThread();
+            this.StartInventoryThread(this.readMode);
         }
     }
 
