@@ -1,4 +1,4 @@
-cordova.define("c4-gun-api-cordova-plugin.C4ApiCordovaPlugin", function (require, exports, module) {
+cordova.define("c4-gun-api-cordova-plugin.C4GunApiCordovaPlugin", function (require, exports, module) {
 
     // var argscheck = require('cordova/argscheck');
     // var channel = require('cordova/channel');
@@ -6,7 +6,7 @@ cordova.define("c4-gun-api-cordova-plugin.C4ApiCordovaPlugin", function (require
     var exec = require('cordova/exec');
     // var cordova = require('cordova');
 
-    var PLUGIN_NAME = 'C4ApiCordovaPlugin';
+    var PLUGIN_NAME = 'C4GunApiCordovaPlugin';
 
     //channel.createSticky('onCordovaInfoReady');
     // Tell cordova channel to wait on the CordovaInfoReady event
@@ -17,7 +17,7 @@ cordova.define("c4-gun-api-cordova-plugin.C4ApiCordovaPlugin", function (require
      * phone, etc.
      * @constructor
      */
-    function C4ApiCordovaPlugin() {
+    function C4GunApiCordovaPlugin() {
         this.available = false;
 
         //var me = this;
@@ -38,7 +38,7 @@ cordova.define("c4-gun-api-cordova-plugin.C4ApiCordovaPlugin", function (require
     }
 
     /** common */
-    C4ApiCordovaPlugin.prototype.common = {
+    C4GunApiCordovaPlugin.prototype.common = {
         /**
          * Get firmware
          *
@@ -54,7 +54,7 @@ cordova.define("c4-gun-api-cordova-plugin.C4ApiCordovaPlugin", function (require
     };
 
     /** uhf */
-    C4ApiCordovaPlugin.prototype.uhf = {
+    C4GunApiCordovaPlugin.prototype.uhf = {
         startInventory: function (successCallback, errorCallback) {
             // argscheck.checkArgs('fF', 'C4GunAPI.getFirmware', arguments);
 
@@ -90,6 +90,6 @@ cordova.define("c4-gun-api-cordova-plugin.C4ApiCordovaPlugin", function (require
 
 
 
-    module.exports = new C4ApiCordovaPlugin();
+    module.exports = new C4GunApiCordovaPlugin();
 
 });

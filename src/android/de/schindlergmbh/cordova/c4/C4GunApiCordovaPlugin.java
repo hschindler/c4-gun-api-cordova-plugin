@@ -1,4 +1,4 @@
-package de.schindlergmbh.cordova.c4;
+package de.schindlergmbh.cordova.c4.gun;
 
 import java.util.TimeZone;
 import java.util.ArrayList;
@@ -32,8 +32,8 @@ import com.pda.uhfm.VersionInfo;
 
 import cn.pda.serialport.Tools;
 
-public class C4ApiCordovaPlugin extends CordovaPlugin {
-    public static final String TAG = "C4ApiCordovaPlugin";
+public class C4GunApiCordovaPlugin extends CordovaPlugin {
+    public static final String TAG = "C4GunApiCordovaPlugin";
 
     // public static final int SEARCH_REQ_CODE = 0;
 
@@ -46,7 +46,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
     private Boolean _readerInitialized;
     private String _errorLog;
 
-    private boolean runFlag = true;
+    // private boolean runFlag = true;
     private boolean startFlag = false;
     private boolean waitingForScanKey = false;
 
@@ -72,11 +72,16 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
      * @param webView The CordovaWebView Cordova is running in.
      */
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        Log.d(TAG, "Initializing C4GunApiCordovaPlugin");
+
         super.initialize(cordova, webView);
+
         this._errorLog = "";
         // Log.d(TAG, "Initializing C4GunApi");
 
         _errorLog = "";
+
+        this._uhfCallBackContext = null;
 
         // this._uhfManager = null;
 
@@ -235,13 +240,13 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
         // TODO Auto-generated method stub
         // super.onResume(multitasking);
 
-        Log.d(TAG, "onResume - runFlag: " + String.valueOf(startFlag));
+        Log.d(TAG, "onResume - startFlag: " + String.valueOf(startFlag));
 
         // this.initializeUHFManager();
 
-        if (this.runFlag == true) {
-            this.StartInventoryThread(this.readMode);
-        }
+        // if (this.startFlag == true) {
+        // this.StartInventoryThread(this.readMode);
+        // }
 
     }
 
@@ -253,9 +258,9 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
         // this.initializeUHFManager();
 
-        if (this.runFlag == true) {
-            this.StartInventoryThread(this.readMode);
-        }
+        // if (this.startFlag == true) {
+        // this.StartInventoryThread(this.readMode);
+        // }
     }
 
     public void onDestroy() {
@@ -270,18 +275,19 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
         // closeBarcode();
 
-        _scanKeyCallBackContext = null;
-        _uhfCallBackContext = null;
+        this._scanKeyCallBackContext = null;
+        this._uhfCallBackContext = null;
 
-        unregisterReceiver();
+        this.unregisterReceiver();
 
         // super.onDestroy();
     }
 
     public void onPause() {
-        startFlag = false;
-        waitingForScanKey = false;
-        this._uhfManager.close();
+        this.StopInventoryThread();
+
+        this.waitingForScanKey = false;
+        // this._uhfManager.close();
         super.onPause(false);
     }
 
@@ -305,7 +311,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
     }
 
     private void InitUhfManager() {
-
+        Log.d(TAG, "initializeUHFManager C4GunApiCordovaPlugin");
         if (this._uhfManager == null) {
 
             try {
@@ -349,7 +355,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
 
         // start inventory thread
         startFlag = true;
-        runFlag = true;
+        // runFlag = true;
 
         if (this._scanThread == null) {
             Log.d(TAG, "StartInventoryThread - create new thread");
@@ -361,7 +367,7 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
     }
 
     private void StopInventoryThread() {
-        runFlag = false;
+        // runFlag = false;
         startFlag = false;
     }
 
@@ -401,26 +407,26 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
                 }
                 toast.show();
                 switch (keyCode) {
-                case KeyEvent.KEYCODE_F1:
+                    case KeyEvent.KEYCODE_F1:
 
-                    break;
-                case KeyEvent.KEYCODE_F2:
+                        break;
+                    case KeyEvent.KEYCODE_F2:
 
-                    break;
-                case KeyEvent.KEYCODE_F3:
-                    if (waitingForScanKey == true) {
-                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "scan clicked");
-                        pluginResult.setKeepCallback(true);
-                        _scanKeyCallBackContext.sendPluginResult(pluginResult);
-                    }
+                        break;
+                    case KeyEvent.KEYCODE_F3:
+                        if (waitingForScanKey == true) {
+                            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "scan clicked");
+                            pluginResult.setKeepCallback(true);
+                            _scanKeyCallBackContext.sendPluginResult(pluginResult);
+                        }
 
-                    break;
-                case KeyEvent.KEYCODE_F4:
+                        break;
+                    case KeyEvent.KEYCODE_F4:
 
-                    break;
-                case KeyEvent.KEYCODE_F5:
+                        break;
+                    case KeyEvent.KEYCODE_F5:
 
-                    break;
+                        break;
                 }
             }
 
@@ -450,6 +456,9 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
                 if (_uhfManager != null) {
 
                     if ("tid".equals(readMode)) {
+
+                        Log.d(TAG, "ReadMode is TID...");
+
                         try {
                             dataList = new ArrayList<String>();
 
@@ -466,9 +475,11 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
                                         byte[] bEpc = Tools.HexString2Bytes(tagDataModel.Epc);
 
                                         byte[] bTid = _uhfManager.readDataByEPC(bEpc, new byte[4], 2, 0, 4);
+
                                         if (bTid != null) {
                                             tid = Tools.Bytes2HexString(bTid, bTid.length);
                                             if (tid.length() > 1) {
+                                                Log.d(TAG, "TID found:" + tid);
                                                 dataList.add(tid);
                                             } else {
                                                 tid = "epc: " + tagDataModel.Epc;
@@ -482,11 +493,15 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
                                         // }
 
                                     } else {
+                                        Log.d(TAG, "TID found length > 0:" + tid);
                                         dataList.add(tid);
                                     }
                                 }
+                            } else {
+                                Log.d(TAG, "tagDataModels = null");
                             }
                         } catch (Exception ex) {
+                            Log.e(TAG, "Exception: " + ex.getMessage());
                             if (_uhfCallBackContext != null) {
                                 PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR,
                                         "Fehler-GetTID: " + ex.getMessage());
@@ -516,6 +531,8 @@ public class C4ApiCordovaPlugin extends CordovaPlugin {
                         }
                     }
 
+                } else {
+                    Log.d(TAG, "_uhfManager = null");
                 }
 
                 if ((dataList != null) && (!dataList.isEmpty())) {

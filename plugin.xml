@@ -5,16 +5,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="c4-gun-api-cordova-plugin"
     version="1.0.1">
-    <name>C4ApiCordovaPlugin</name>
+    <name>C4GunApiCordovaPlugin</name>
     <description>C4 Gun API</description>
     <license>MIT</license>
     <keywords>C4,gun,api</keywords>
     <repo>https://github.com/hschindler/c4-gun-api-cordova-plugin.git</repo>
     <issue>https://github.com/hschindler/c4-gun-api-cordova-plugin.git/issues</issue>
-    <js-module src="www/c4GunAPI.js" name="C4ApiCordovaPlugin">
+    <js-module src="www/c4GunAPI.js" name="C4GunApiCordovaPlugin">
     <runs/>
         <!-- This is the window variable name you want, like window.MyCordovaPlugin -->
-        <clobbers target="C4ApiCordovaPlugin" />
+        <clobbers target="C4GunApiCordovaPlugin" />
     </js-module>
 
     <!-- android -->
@@ -22,8 +22,8 @@
         <hook type="before_plugin_install" src="scripts/update_build_gradle.js" />
         
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="C4ApiCordovaPlugin" >
-                <param name="android-package" value="de.schindlergmbh.cordova.c4.C4ApiCordovaPlugin"/>
+            <feature name="C4GunApiCordovaPlugin" >
+                <param name="android-package" value="de.schindlergmbh.cordova.c4.gun.C4GunApiCordovaPlugin"/>
                 <param name="onload" value="true" />
             </feature>
         </config-file>
@@ -44,7 +44,7 @@
 
         <framework src="src/android/extras.gradle" custom="true" type="gradleReference" />
 
-        <source-file src="src/android/de/schindlergmbh/cordova/c4/C4ApiCordovaPlugin.java" target-dir="src/de/schindlergmbh/cordova/c4/" />
+        <source-file src="src/android/de/schindlergmbh/cordova/c4/C4GunApiCordovaPlugin.java" target-dir="src/de/schindlergmbh/cordova/c4/" />
         <!-- <source-file src="src/android/libs/serialport.jar" target-dir="libs" />
         <source-file src="src/android/libs/uhf_m_v1.4.jar" target-dir="libs" />         -->
         <lib-file src="src/android/libs/serialport.jar" arch="device" /> 
@@ -55,6 +55,7 @@
         <source-file src="src/android/libs/armeabi-v7a/libdevapi.so" target-dir="libs/armeabi-v7a" />        
         <source-file src="src/android/libs/armeabi-v7a/libirdaSerialPort.so" target-dir="libs/armeabi-v7a" />
         
+        <resource-file src="src/android/libs/armeabi/libdevapi.so" target="libs/armeabi" />
     </platform>
 
 
