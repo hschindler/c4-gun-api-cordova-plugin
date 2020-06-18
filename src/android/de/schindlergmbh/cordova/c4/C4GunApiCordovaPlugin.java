@@ -129,7 +129,7 @@ public class C4GunApiCordovaPlugin extends CordovaPlugin {
 
         if ("getFirmware".equals(action)) {
             try {
-                this.InitUhfManager();
+                this.initializeUHFManager();
             } catch (Exception e) {
                 // TODO: handle exception
             }
@@ -143,14 +143,26 @@ public class C4GunApiCordovaPlugin extends CordovaPlugin {
 
             final com.pda.uhfm.VersionInfo firmwareVersion = this._uhfManager.getVersion();
 
+            this.disposeUHFManager();
+
             cordova.getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
 
                     // String test = "test 1111";
-                    if (firmwareVersion != null) {
-                        callbackContext.success(firmwareVersion.SoftwareVersion);
+
+                    if (firmwareVersion == null) {
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "");
+                        callbackContext.sendPluginResult(pluginResult);
+                    } else {
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK,
+                                firmwareVersion.SoftwareVersion);
+                        callbackContext.sendPluginResult(pluginResult);
                     }
+
+                    // if (firmwareVersion != null) {
+                    // callbackContext.success(firmwareVersion.SoftwareVersion);
+                    // }
 
                     // PluginResult pluginResult = new PluginResult(PluginResult.Status.OK,
                     // firmwareVersion);
@@ -310,7 +322,7 @@ public class C4GunApiCordovaPlugin extends CordovaPlugin {
         }
     }
 
-    private void InitUhfManager() {
+    private void initializeUHFManager() {
         Log.d(TAG, "initializeUHFManager C4GunApiCordovaPlugin");
         if (this._uhfManager == null) {
 
@@ -445,7 +457,7 @@ public class C4GunApiCordovaPlugin extends CordovaPlugin {
             super.run();
             Log.d(TAG, "InventoryThread starting...");
 
-            InitUhfManager();
+            this.initializeUHFManager();
 
             Log.d(TAG, "InventoryThread startflag = " + String.valueOf(startFlag));
 
