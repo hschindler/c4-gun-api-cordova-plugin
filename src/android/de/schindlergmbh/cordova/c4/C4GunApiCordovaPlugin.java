@@ -457,7 +457,7 @@ public class C4GunApiCordovaPlugin extends CordovaPlugin {
             super.run();
             Log.d(TAG, "InventoryThread starting...");
 
-            this.initializeUHFManager();
+            initializeUHFManager();
 
             Log.d(TAG, "InventoryThread startflag = " + String.valueOf(startFlag));
 
